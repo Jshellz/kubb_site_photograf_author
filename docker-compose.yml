@@ -1,0 +1,44 @@
+services:
+
+    nginx-service:
+        image: nginx:stable-alpine
+        container_name: nginx-container
+        ports:
+            - "8080:80"
+        volumes:
+            - ./app:/var/www/web
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php81-service
+            - mysql8-service
+        networks:
+            - nginx-php81-mysql8
+
+    php81-service:
+        build:
+            context: .
+            dockerfile: ./php/Dockerfile
+        container_name: php81-container
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./app:/var/www/web
+        networks:
+            - nginx-php81-mysql8
+
+    mysql8-service:
+        image: mysql:8
+        container_name: mysql8-container
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./mysql:/var/lib/mysql
+        restart: always # always restart unless stopped manually
+        environment:
+            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_DATABASE: 'db'
+        networks:
+            - nginx-php81-mysql8
+            
+networks:
+    nginx-php81-mysql8:
