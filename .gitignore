@@ -2,5 +2,6 @@
 .idea
 /app/var
 /app/vendor
-/app/src/Controller/.gitignore
 app/.env
+init-mysql.sh
+my.cnf
